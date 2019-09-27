@@ -21,7 +21,7 @@ public class GameClient extends JComponent {
 
 	@Override
 	protected void paintComponent(Graphics g) {
-		g.drawImage(this.playerTank.getImage(), this.playerTank.getX(), this.playerTank.getY(), null);
+		playerTank.drew(g);
 	}
 
 	public static void main(String[] args) {
@@ -37,24 +37,12 @@ public class GameClient extends JComponent {
 
 			@Override
 			public void keyPressed(KeyEvent e) {
-				switch (e.getKeyCode()) {
-				case KeyEvent.VK_UP:
-					client.playerTank.setY(client.playerTank.getY() - 5);
-					break;
-				case KeyEvent.VK_DOWN:
-					client.playerTank.setY(client.playerTank.getY() + 5);
-					break;
-				case KeyEvent.VK_LEFT:
-					client.playerTank.setX(client.playerTank.getX() - 5);
-					break;
-				case KeyEvent.VK_RIGHT:
-					client.playerTank.setX(client.playerTank.getX() + 5);
-					break;
-				}
+			client.playerTank.keyPressed(e);
 			}
 
 			@Override
 			public void keyReleased(KeyEvent e) {
+				client.playerTank.keyReleased(e);
 
 			}
 
