@@ -1,14 +1,26 @@
 package com.java.tankwar;
 
+import java.awt.Image;
+
 public enum Direction {
 
-	UP,
-	DOWN,
-	LEFT,
-	RIGHT,
+	UP("U"),
+	DOWN("D"),
+	LEFT("L"),
+	RIGHT("R"),
+	LEFT_UP("LU"),
+	RIGHT_UP("RU"),
+	LEFT_DOWN("LD"),
+	RIGHT_DOWN("RD");
 	
-	UPLEFT,
-	UPRIGHT,
-	DOWNLEFT,
-	DOWNRIGHT
+	private final String abbrev;
+	
+	private Direction(String abbrev) {
+		this.abbrev = abbrev;
+	}
+
+	Image getImage(String prefix) {
+		return Tools.getImage(prefix+abbrev+".gif");
+	}
+
 }
