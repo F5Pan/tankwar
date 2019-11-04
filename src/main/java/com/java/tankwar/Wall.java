@@ -25,17 +25,17 @@ public class Wall {
 	
 	public Rectangle getRectangle() {
 		return horizontal ? new Rectangle(x,y,bricks*bricksImage.getWidth(null),bricksImage.getHeight(null))
-				: new Rectangle(x,y,bricksImage.getWidth(null),bricksImage.getHeight(null)*bricks);
+				: new Rectangle(x,y,bricksImage.getWidth(null),bricks*bricksImage.getHeight(null));
 	}
 
 	public void draw(Graphics g) {
 		if (horizontal) {
-			for (int i = 0; i <= bricks; i++) {
+			for (int i = 0; i < bricks; i++) {
 				g.drawImage(bricksImage, x + i * bricksImage.getWidth(null), y, null);
 			}
 		}else {
-			for (int i = 0; i <= bricks; i++) {
-				g.drawImage(bricksImage, x,y + i * bricksImage.getWidth(null),null);
+			for (int i = 0; i < bricks; i++) {
+				g.drawImage(bricksImage, x,y + i * bricksImage.getHeight(null),null);
 			}
 		}
 	}

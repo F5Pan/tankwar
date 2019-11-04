@@ -4,9 +4,9 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
+import java.io.File;
 
-import javax.swing.ImageIcon;
-import javax.swing.plaf.nimbus.NimbusLookAndFeel;
+import javafx.scene.media.*;
 
 public class Tank {
 
@@ -92,67 +92,66 @@ public class Tank {
 	}
 
 	Image getImage() {
-		String prefix = enemy?"e":"";
+		String prefix = enemy ? "e" : "";
 		switch (direction) {
 		case UP:
-			return new ImageIcon("assets/images/"+prefix+"tankU.gif").getImage();
+			return Tools.getImage(prefix + "tankU.gif");
 		case UPLEFT:
-			return new ImageIcon("assets/images"+prefix+"/tankLU.gif").getImage();
+			return Tools.getImage(prefix + "tankLU.gif");
 		case UPRIGHT:
-			return new ImageIcon("assets/images"+prefix+"/tankRU.gif").getImage();
+			return Tools.getImage(prefix + "tankRU.gif");
 		case DOWN:
-			return new ImageIcon("assets/images"+prefix+"/tankD.gif").getImage();
+			return Tools.getImage(prefix + "tankD.gif");
 		case DOWNLEFT:
-			return new ImageIcon("assets/images"+prefix+"/tankLD.gif").getImage();
+			return Tools.getImage(prefix + "tankLD.gif");
 		case DOWNRIGHT:
-			return new ImageIcon("assets/images"+prefix+"/tankRD.gif").getImage();
+			return Tools.getImage(prefix + "tankRD.gif");
 		case LEFT:
-			return new ImageIcon("assets/images"+prefix+"/tankL.gif").getImage();
+			return Tools.getImage(prefix + "tankL.gif");
 		case RIGHT:
-			return new ImageIcon("assets/images"+prefix+"/tankR.gif").getImage();
+			return Tools.getImage(prefix + "tankR.gif");
 
 		}
 		return null;
 	}
 
 	void draw(Graphics g) {
-		int oldX=x,oldY=y;
+		int oldX = x, oldY = y;
 		this.determineDirection();
 		this.move();
-		
-		if(x<0) {
-			x=0;
-		}else if (x>800-getImage().getHeight(null)) {
-			x=800-getImage().getHeight(null);
+
+		if (x < 0) {
+			x = 0;
+		} else if (x > 800 - getImage().getHeight(null)) {
+			x = 800 - getImage().getHeight(null);
 		}
-		if(y<0) {
-			y=0;
-		}else if (y>600-getImage().getHeight(null)) {
-			y=600-getImage().getHeight(null);
+		if (y < 0) {
+			y = 0;
+		} else if (y > 600 - getImage().getHeight(null)) {
+			y = 600 - getImage().getHeight(null);
 		}
-		
+
 		Rectangle rec = this.getRectangle();
-		for (Wall wall:GameClient.getInstance().getWalls()) {
-			if(rec.intersects(wall.getRectangle())) {
-				x=oldX;
-				y=oldY;
+		for (Wall wall : GameClient.getInstance().getWalls()) {
+			if (rec.intersects(wall.getRectangle())) {
+				x = oldX;
+				y = oldY;
 				break;
 			}
 		}
-		for (Tank tank:GameClient.getInstance().getEnemyTanks()) {
-			if(rec.intersects(tank.getRectangle())) {
-				x=oldX;
-				y=oldY;
+		for (Tank tank : GameClient.getInstance().getEnemyTanks()) {
+			if (rec.intersects(tank.getRectangle())) {
+				x = oldX;
+				y = oldY;
 				break;
 			}
 		}
-		
-		
+
 		g.drawImage(this.getImage(), this.x, this.y, null);
 	}
-	
+
 	public Rectangle getRectangle() {
-		return new Rectangle(x,y,getImage().getWidth(null),getImage().getHeight(null));
+		return new Rectangle(x, y, getImage().getWidth(null), getImage().getHeight(null));
 	}
 
 	private boolean up, down, left, right;
@@ -171,7 +170,22 @@ public class Tank {
 		case KeyEvent.VK_RIGHT:
 			right = true;
 			break;
+
+		case KeyEvent.VK_CONTROL:
+			fire();
+			break;
 		}
+		this.determineDirection();
+	}
+
+	private void fire() {
+		Missile missile = new Missile(x + getImage().getWidth(null) / 2 - 6, y + getImage().getHeight(null) / 2 - 6,
+				enemy, direction);
+		GameClient.getInstance().getMissiles().add(missile);
+
+		Media sound = new Media(new File("assets/audios/shoot.wav").toURI().toString());
+		MediaPlayer mediaPlayer = new MediaPlayer(sound);
+		mediaPlayer.play();
 	}
 
 	private boolean stopped;
