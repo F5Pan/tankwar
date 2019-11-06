@@ -11,6 +11,8 @@ import javafx.scene.media.*;
 
 public class Tank {
 
+	private static final int MOVE_SPEED = 5;
+
 	private int x;
 
 	private int y;
@@ -59,37 +61,9 @@ public class Tank {
 		if (this.stopped) {
 			return;
 		}
-		switch (direction) {
-		case UP:
-			y -= 5;
-			break;
-		case LEFT_UP:
-			y -= 5;
-			x -= 5;
-			break;
-		case RIGHT_UP:
-			y -= 5;
-			x += 5;
-			break;
-		case DOWN:
-			y += 5;
-			break;
-		case LEFT_DOWN:
-			y += 5;
-			x -= 5;
-			break;
-		case RIGHT_DOWN:
-			y += 5;
-			x += 5;
-			break;
-		case LEFT:
-			x -= 5;
-			break;
-
-		case RIGHT:
-			x += 5;
-			break;
-		}
+		x += direction.xFactor * MOVE_SPEED;
+		y += direction.yFactor * MOVE_SPEED;
+		
 	}
 
 	Image getImage() {
