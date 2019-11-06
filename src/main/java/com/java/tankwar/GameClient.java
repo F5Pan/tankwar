@@ -37,6 +37,15 @@ public class GameClient extends JComponent {
 	public List<Tank> getEnemyTanks() {
 		return enemyTanks;
 	}
+	
+	public void removeMissile() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public Tank getPlayerTank() {
+		return playerTank;
+	}
 
 	private GameClient() {
 		this.playerTank = new Tank(400, 100, Direction.DOWN);
@@ -58,12 +67,14 @@ public class GameClient extends JComponent {
 		g.setColor(Color.black);
 		g.fillRect(0, 0, 800, 600);
 		playerTank.draw(g);
+		enemyTanks.removeIf(t -> !t.isLive());
 		for (Tank tank : enemyTanks) {
 			tank.draw(g);
 		}
 		for (Wall wall : walls) {
 			wall.draw(g);
 		}
+		missiles.removeIf(m->!m.isLive());
 		for (Missile missile : missiles) {
 			missile.draw(g);
 		}
@@ -105,5 +116,6 @@ public class GameClient extends JComponent {
 			}
 		}
 	}
+
 
 }

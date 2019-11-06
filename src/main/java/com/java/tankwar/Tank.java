@@ -19,6 +19,30 @@ public class Tank {
 
 	private boolean enemy;
 
+	private boolean live = true;
+
+	private int hp;
+
+	public int getHp() {
+		return hp;
+	}
+
+	public void setHp(int hp) {
+		this.hp = hp;
+	}
+
+	public boolean isLive() {
+		return live;
+	}
+
+	public void setLive(boolean live) {
+		this.live = live;
+	}
+
+	public boolean isEnemy() {
+		return enemy;
+	}
+
 	private Direction direction;
 
 	public Tank(int x, int y, Direction direction) {
@@ -63,15 +87,16 @@ public class Tank {
 		}
 		x += direction.xFactor * MOVE_SPEED;
 		y += direction.yFactor * MOVE_SPEED;
-		
+
 	}
 
 	Image getImage() {
 		String prefix = enemy ? "e" : "";
-		return direction.getImage(prefix+"tank");
+		return direction.getImage(prefix + "tank");
 	}
 
 	void draw(Graphics g) {
+	
 		int oldX = x, oldY = y;
 		this.determineDirection();
 		this.move();
@@ -144,21 +169,20 @@ public class Tank {
 
 		playAudio("shoot.wav");
 	}
-	
+
 	private void superFire() {
-		for(Direction direction :Direction.values()) {
+		for (Direction direction : Direction.values()) {
 			Missile missile = new Missile(x + getImage().getWidth(null) / 2 - 6, y + getImage().getHeight(null) / 2 - 6,
 					enemy, direction);
-			GameClient.getInstance().getMissiles().add(missile);	
+			GameClient.getInstance().getMissiles().add(missile);
 		}
-		String audioFile = new Random().nextBoolean()?"supershoot.aiff":"supershoot.wav";
+		String audioFile = new Random().nextBoolean() ? "supershoot.aiff" : "supershoot.wav";
 		playAudio(audioFile);
-		
+
 	}
 
-
 	private void playAudio(String fileName) {
-		Media sound = new Media(new File("assets/audios/"+fileName).toURI().toString());
+		Media sound = new Media(new File("assets/audios/" + fileName).toURI().toString());
 		MediaPlayer mediaPlayer = new MediaPlayer(sound);
 		mediaPlayer.play();
 	}
@@ -207,4 +231,5 @@ public class Tank {
 			break;
 		}
 	}
+
 }
