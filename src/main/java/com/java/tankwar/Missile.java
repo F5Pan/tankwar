@@ -12,7 +12,7 @@ public class Missile {
 	private final boolean enemy;
 	private final Direction direction;
 	private boolean live = true;
-	
+
 	public boolean isLive() {
 		return live;
 	}
@@ -34,17 +34,17 @@ public class Missile {
 	}
 
 	void move() {
-		
+
 		x += direction.xFactor * SPEED;
 		y += direction.yFactor * SPEED;
-		
+
 	}
 
 	public void draw(Graphics g) {
 		move();
 		if (x < 0 || x > 800 || y < 0 || y > 600) {
 			this.live = false;
-			
+
 			return;
 		}
 		Rectangle rec = this.getRectangle();
@@ -54,32 +54,32 @@ public class Missile {
 				return;
 			}
 		}
-		if(enemy) {
+		if (enemy) {
 			Tank playTank = GameClient.getInstance().getPlayerTank();
 			if (rec.intersects(playTank.getRectangle())) {
-				playTank.setHp(playTank.getHp()-20);
-				if (playTank.getHp()<=0) {
+				playTank.setHp(playTank.getHp() - 20);
+				if (playTank.getHp() <= 0) {
 					playTank.setLive(false);
 				}
 				this.live = false;
-				
+
 			}
-		}else {
+		} else {
 			for (Tank tank : GameClient.getInstance().getEnemyTanks()) {
 				if (rec.intersects(tank.getRectangle())) {
 					tank.setLive(false);
 					this.live = false;
-					
+
 					break;
 				}
 			}
 		}
-		
+
 		g.drawImage(getImage(), x, y, null);
 
 	}
-	
+
 	Rectangle getRectangle() {
-		return new Rectangle(x,y,getImage().getWidth(null),getImage().getHeight(null));
+		return new Rectangle(x, y, getImage().getWidth(null), getImage().getHeight(null));
 	}
 }
