@@ -8,6 +8,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -25,6 +26,11 @@ public class GameClient extends JComponent {
 	private List<Tank> enemyTanks;
 	private List<Wall> walls;
 	private List<Missile> missiles;
+	private List<Explosion> explosions;
+
+	void addExplosions(Explosion explosion) {
+		explosions.add(explosion);
+	}
 
 	public List<Missile> getMissiles() {
 		return missiles;
@@ -38,9 +44,8 @@ public class GameClient extends JComponent {
 		return enemyTanks;
 	}
 
-	public void removeMissile() {
-		// TODO Auto-generated method stub
-
+	synchronized void add(Missile missile) {
+		missiles.add(missile);
 	}
 
 	public Tank getPlayerTank() {
@@ -49,7 +54,8 @@ public class GameClient extends JComponent {
 
 	private GameClient() {
 		this.playerTank = new Tank(400, 100, Direction.DOWN);
-		this.missiles = new ArrayList<>();
+		this.missiles = new CopyOnWriteArrayList<>();
+		this.explosions = new ArrayList<>();
 		this.walls = Arrays.asList(new Wall(200, 140, true, 15), new Wall(200, 520, true, 15),
 				new Wall(100, 80, false, 15), new Wall(700, 80, false, 15));
 		this.initEnemyTanks();
@@ -58,7 +64,7 @@ public class GameClient extends JComponent {
 	}
 
 	private void initEnemyTanks() {
-		this.enemyTanks = new ArrayList<>(12);
+		this.enemyTanks = new CopyOnWriteArrayList<>();
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 4; j++) {
 				this.enemyTanks.add(new Tank(200 + j * 120, 400 + 40 * i, true, Direction.UP));
@@ -81,9 +87,14 @@ public class GameClient extends JComponent {
 		for (Wall wall : walls) {
 			wall.draw(g);
 		}
+		System.out.println(Thread.currentThread().getName());
 		missiles.removeIf(m -> !m.isLive());
 		for (Missile missile : missiles) {
 			missile.draw(g);
+		}
+		explosions.removeIf(e -> !e.isLive());
+		for (Explosion explosions : explosions) {
+			explosions.draw(g);
 		}
 	}
 
@@ -116,7 +127,11 @@ public class GameClient extends JComponent {
 		frame.setVisible(true);
 
 		while (true) {
+			System.out.println(Thread.currentThread().getName());
 			client.repaint();
+			for (Tank tank : client.enemyTanks) {
+				tank.actRandomly();
+			}
 			try {
 				Thread.sleep(50);
 			} catch (InterruptedException e1) {

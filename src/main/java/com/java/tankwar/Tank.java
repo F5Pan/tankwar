@@ -1,11 +1,16 @@
 package com.java.tankwar;
 
+import static org.hamcrest.CoreMatchers.nullValue;
+
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.Random;
+
+
 
 import javafx.scene.media.*;
 
@@ -96,9 +101,11 @@ public class Tank {
 	}
 
 	void draw(Graphics g) {
-	
+
 		int oldX = x, oldY = y;
-		this.determineDirection();
+		if (!this.enemy) {
+			this.determineDirection();
+		}
 		this.move();
 
 		if (x < 0) {
@@ -112,22 +119,36 @@ public class Tank {
 			y = 600 - getImage().getHeight(null);
 		}
 
-		Rectangle rec = this.getRectangle();
-		for (Wall wall : GameClient.getInstance().getWalls()) {
-			if (rec.intersects(wall.getRectangle())) {
-				x = oldX;
-				y = oldY;
-				break;
-			}
-		}
-		for (Tank tank : GameClient.getInstance().getEnemyTanks()) {
-			if (rec.intersects(tank.getRectangle())) {
-				x = oldX;
-				y = oldY;
-				break;
-			}
-		}
+		 Rectangle rec = this.getRectangle();
+	        for (Wall wall : GameClient.getInstance().getWalls()) {
+	            if (rec.intersects(wall.getRectangle())) {
+	                x = oldX;
+	                y = oldY;
+	                break;
+	            }
+	        }
 
+	        for (Tank tank : GameClient.getInstance().getEnemyTanks()) {
+	            if (tank != this && rec.intersects(tank.getRectangle())) {
+	                x = oldX;
+	                y = oldY;
+	                break;
+	            }
+	        }
+
+	        if (this.enemy && rec.intersects(GameClient.getInstance()
+	            .getPlayerTank().getRectangle())) {
+	            x = oldX;
+	            y = oldY;
+	        }
+		if(!enemy) {
+			   g.setColor(Color.WHITE);
+	            g.fillRect(x, y - 10, this.getImage().getWidth(null), 10);
+
+	            g.setColor(Color.RED);
+	            int width = hp * this.getImage().getWidth(null) / 100;
+	            g.fillRect(x, y - 10, width, 10);
+		}
 		g.drawImage(this.getImage(), this.x, this.y, null);
 	}
 
@@ -167,24 +188,18 @@ public class Tank {
 				enemy, direction);
 		GameClient.getInstance().getMissiles().add(missile);
 
-		playAudio("shoot.wav");
+		Tools.playAudio("shoot.wav");
 	}
 
 	private void superFire() {
 		for (Direction direction : Direction.values()) {
 			Missile missile = new Missile(x + getImage().getWidth(null) / 2 - 6, y + getImage().getHeight(null) / 2 - 6,
 					enemy, direction);
-			GameClient.getInstance().getMissiles().add(missile);
+			GameClient.getInstance().add(missile);
 		}
 		String audioFile = new Random().nextBoolean() ? "supershoot.aiff" : "supershoot.wav";
-		playAudio(audioFile);
+		Tools.playAudio(audioFile);
 
-	}
-
-	private void playAudio(String fileName) {
-		Media sound = new Media(new File("assets/audios/" + fileName).toURI().toString());
-		MediaPlayer mediaPlayer = new MediaPlayer(sound);
-		mediaPlayer.play();
 	}
 
 	private boolean stopped;
@@ -230,6 +245,22 @@ public class Tank {
 			right = false;
 			break;
 		}
+	}
+
+	private final Random random = new Random();
+
+	private int step = new Random().nextInt(12) + 3;
+
+	public void actRandomly() {
+		Direction[] dirs = Direction.values();
+		if (step == 0) {
+			step = random.nextInt(12);
+			this.direction = dirs[new Random().nextInt(dirs.length)];
+			if (new Random().nextBoolean()) {
+				this.fire();
+			}
+		}
+		step--;
 	}
 
 }
