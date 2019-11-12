@@ -28,7 +28,7 @@ public class GameClient extends JComponent {
 	private List<Missile> missiles;
 	private List<Explosion> explosions;
 
-	void addExplosions(Explosion explosion) {
+	void addExplosion(Explosion explosion) {
 		explosions.add(explosion);
 	}
 
@@ -93,8 +93,8 @@ public class GameClient extends JComponent {
 			missile.draw(g);
 		}
 		explosions.removeIf(e -> !e.isLive());
-		for (Explosion explosions : explosions) {
-			explosions.draw(g);
+		for (Explosion explosion : explosions) {
+			explosion.draw(g);
 		}
 	}
 

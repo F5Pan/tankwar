@@ -47,31 +47,30 @@ public class Missile {
 
 			return;
 		}
-		Rectangle rec = this.getRectangle();
+		Rectangle rectangle = this.getRectangle();
 		for (Wall wall : GameClient.getInstance().getWalls()) {
-			if (rec.intersects(wall.getRectangle())) {
-				this.live = false;
+			if (rectangle.intersects(wall.getRectangle())) {
+				this.setLive(false);
 				return;
 			}
 		}
 		if (enemy) {
 			Tank playTank = GameClient.getInstance().getPlayerTank();
-			if (rec.intersects(playTank.getRectangle())) {
+			if (rectangle.intersects(playTank.getRectangle())) {
 				addExplosion();
 				playTank.setHp(playTank.getHp() - 20);
 				if (playTank.getHp() <= 0) {
 					playTank.setLive(false);
 				}
-				this.live = false;
+				this.setLive(false);
 
 			}
 		} else {
 			for (Tank tank : GameClient.getInstance().getEnemyTanks()) {
-				if (rec.intersects(tank.getRectangle())) {
+				if (rectangle.intersects(tank.getRectangle())) {
 					addExplosion();
 					tank.setLive(false);
-					this.live = false;
-
+					this.setLive(false);
 					break;
 				}
 			}
@@ -80,9 +79,9 @@ public class Missile {
 		g.drawImage(getImage(), x, y, null);
 
 	}
-	
+
 	private void addExplosion() {
-		GameClient.getInstance().addExplosions(new Explosion(x,y));
+		GameClient.getInstance().addExplosion(new Explosion(x, y));
 		Tools.playAudio("explode.wav");
 	}
 
