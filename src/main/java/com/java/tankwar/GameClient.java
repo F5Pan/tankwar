@@ -2,6 +2,7 @@ package com.java.tankwar;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -76,25 +77,34 @@ public class GameClient extends JComponent {
 	protected void paintComponent(Graphics g) {
 		g.setColor(Color.black);
 		g.fillRect(0, 0, 800, 600);
-		playerTank.draw(g);
-		enemyTanks.removeIf(t -> !t.isLive());
-		if (enemyTanks.isEmpty()) {
-			this.initEnemyTanks();
-		}
-		for (Tank tank : enemyTanks) {
-			tank.draw(g);
-		}
-		for (Wall wall : walls) {
-			wall.draw(g);
-		}
-		System.out.println(Thread.currentThread().getName());
-		missiles.removeIf(m -> !m.isLive());
-		for (Missile missile : missiles) {
-			missile.draw(g);
-		}
-		explosions.removeIf(e -> !e.isLive());
-		for (Explosion explosion : explosions) {
-			explosion.draw(g);
+		if (!playerTank.isLive()) {
+			
+            g.setColor(Color.RED);
+            g.setFont(new Font(null, Font.BOLD, 100));
+            g.drawString("GAME OVER", 100, 200);
+            g.setFont(new Font(null, Font.BOLD, 60));
+            g.drawString("PRESS F2 TO RESTART", 60, 360);
+
+		} else {
+			playerTank.draw(g);
+			enemyTanks.removeIf(t -> !t.isLive());
+			if (enemyTanks.isEmpty()) {
+				this.initEnemyTanks();
+			}
+			for (Tank tank : enemyTanks) {
+				tank.draw(g);
+			}
+			for (Wall wall : walls) {
+				wall.draw(g);
+			}
+			missiles.removeIf(m -> !m.isLive());
+			for (Missile missile : missiles) {
+				missile.draw(g);
+			}
+			explosions.removeIf(e -> !e.isLive());
+			for (Explosion explosion : explosions) {
+				explosion.draw(g);
+			}
 		}
 	}
 
@@ -127,10 +137,11 @@ public class GameClient extends JComponent {
 		frame.setVisible(true);
 
 		while (true) {
-			System.out.println(Thread.currentThread().getName());
 			client.repaint();
-			for (Tank tank : client.enemyTanks) {
-				tank.actRandomly();
+			if (client.playerTank.isLive()) {
+				for (Tank tank : client.enemyTanks) {
+					tank.actRandomly();
+				}
 			}
 			try {
 				Thread.sleep(50);
@@ -138,6 +149,13 @@ public class GameClient extends JComponent {
 				e1.printStackTrace();
 			}
 		}
+	}
+
+	public void restart() {
+		if(!playerTank.isLive()) {
+			playerTank = new Tank(400, 100, Direction.DOWN);
+		}
+		this.initEnemyTanks();
 	}
 
 }

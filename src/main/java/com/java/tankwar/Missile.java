@@ -55,12 +55,12 @@ public class Missile {
 			}
 		}
 		if (enemy) {
-			Tank playTank = GameClient.getInstance().getPlayerTank();
-			if (rectangle.intersects(playTank.getRectangle())) {
+			Tank playerTank = GameClient.getInstance().getPlayerTank();
+			if (rectangle.intersects(playerTank.getRectangle())) {
 				addExplosion();
-				playTank.setHp(playTank.getHp() - 20);
-				if (playTank.getHp() <= 0) {
-					playTank.setLive(false);
+				playerTank.setHp(playerTank.getHp() - 20);
+				if (playerTank.getHp() <= 0) {
+					playerTank.setLive(false);
 				}
 				this.setLive(false);
 

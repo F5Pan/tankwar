@@ -1,18 +1,11 @@
 package com.java.tankwar;
 
-import static org.hamcrest.CoreMatchers.nullValue;
-
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
-import java.io.File;
 import java.util.Random;
-
-
-
-import javafx.scene.media.*;
 
 public class Tank {
 
@@ -26,7 +19,9 @@ public class Tank {
 
 	private boolean live = true;
 
-	private int hp;
+	private static final int MAX_HP = 100;
+
+	private int hp = MAX_HP;
 
 	public int getHp() {
 		return hp;
@@ -119,35 +114,34 @@ public class Tank {
 			y = 600 - getImage().getHeight(null);
 		}
 
-		 Rectangle rec = this.getRectangle();
-	        for (Wall wall : GameClient.getInstance().getWalls()) {
-	            if (rec.intersects(wall.getRectangle())) {
-	                x = oldX;
-	                y = oldY;
-	                break;
-	            }
-	        }
+		Rectangle rec = this.getRectangle();
+		for (Wall wall : GameClient.getInstance().getWalls()) {
+			if (rec.intersects(wall.getRectangle())) {
+				x = oldX;
+				y = oldY;
+				break;
+			}
+		}
 
-	        for (Tank tank : GameClient.getInstance().getEnemyTanks()) {
-	            if (tank != this && rec.intersects(tank.getRectangle())) {
-	                x = oldX;
-	                y = oldY;
-	                break;
-	            }
-	        }
+		for (Tank tank : GameClient.getInstance().getEnemyTanks()) {
+			if (tank != this && rec.intersects(tank.getRectangle())) {
+				x = oldX;
+				y = oldY;
+				break;
+			}
+		}
 
-	        if (this.enemy && rec.intersects(GameClient.getInstance()
-	            .getPlayerTank().getRectangle())) {
-	            x = oldX;
-	            y = oldY;
-	        }
-		if(!enemy) {
-			   g.setColor(Color.WHITE);
-	            g.fillRect(x, y - 10, this.getImage().getWidth(null), 10);
+		if (this.enemy && rec.intersects(GameClient.getInstance().getPlayerTank().getRectangle())) {
+			x = oldX;
+			y = oldY;
+		}
+		if (!enemy) {
+			g.setColor(Color.WHITE);
+			g.fillRect(x, y - 10, this.getImage().getWidth(null), 10);
 
-	            g.setColor(Color.RED);
-	            int width = hp * this.getImage().getWidth(null) / 100;
-	            g.fillRect(x, y - 10, width, 10);
+			g.setColor(Color.RED);
+			int width = hp * this.getImage().getWidth(null) / 100;
+			g.fillRect(x, y - 10, width, 10);
 		}
 		g.drawImage(this.getImage(), this.x, this.y, null);
 	}
@@ -179,7 +173,11 @@ public class Tank {
 		case KeyEvent.VK_A:
 			superFire();
 			break;
+		case KeyEvent.VK_F2:
+			GameClient.getInstance().restart();
+			break;
 		}
+
 		this.determineDirection();
 	}
 
@@ -245,6 +243,7 @@ public class Tank {
 			right = false;
 			break;
 		}
+		this.determineDirection();
 	}
 
 	private final Random random = new Random();
@@ -254,7 +253,7 @@ public class Tank {
 	public void actRandomly() {
 		Direction[] dirs = Direction.values();
 		if (step == 0) {
-			step = random.nextInt(12)+ 3;
+			step = random.nextInt(12) + 3;
 			this.direction = dirs[new Random().nextInt(dirs.length)];
 			if (new Random().nextBoolean()) {
 				this.fire();
