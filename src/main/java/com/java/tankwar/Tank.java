@@ -7,8 +7,13 @@ import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.util.Random;
 
+import com.java.tankwar.Save.Position;
+
 public class Tank {
 
+	Position getPosition() {
+		return new Position(x,y,direction);
+	}
 	private static final int MOVE_SPEED = 5;
 
 	private int x;

@@ -6,16 +6,31 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
+
+import org.apache.commons.io.FileUtils;
+
+import com.alibaba.fastjson.JSON;
 
 public class GameClient extends JComponent {
 
@@ -84,7 +99,7 @@ public class GameClient extends JComponent {
 			}
 		}
 	}
-	
+
 	private final static Random RANDOM = new Random();
 
 	@Override
@@ -150,8 +165,21 @@ public class GameClient extends JComponent {
 		frame.setTitle("坦克大戰!");
 		frame.setIconImage(Tools.getImage("icon.png"));
 		final GameClient client = GameClient.getInstance();
-		client.repaint();
 		frame.add(client);
+		frame.addWindowListener(new WindowAdapter() {
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+				try {
+					client.save();
+					System.exit(0);
+				} catch (IOException e1) {
+					JOptionPane.showMessageDialog(null, "Failed to save Game", "Oops! Error",
+							JOptionPane.ERROR_MESSAGE);
+					System.exit(4);
+				}
+			}
+		});
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frame.pack();
 		frame.addKeyListener(new KeyAdapter() {
@@ -186,6 +214,17 @@ public class GameClient extends JComponent {
 			}
 		}
 	}
+
+    void save(String destination) throws IOException {
+        Save save = new Save(playerTank.isLive(), playerTank.getPosition(),
+            enemyTanks.stream().filter(Tank::isLive)
+                .map(Tank::getPosition).collect(Collectors.toList()));
+        FileUtils.write(new File(destination), JSON.toJSONString(save, true), StandardCharsets.UTF_8);
+    }
+
+    void save() throws IOException {
+        this.save("game.sav");
+    }
 
 	public void restart() {
 		if (!playerTank.isLive()) {
