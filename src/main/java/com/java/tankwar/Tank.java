@@ -12,8 +12,9 @@ import com.java.tankwar.Save.Position;
 public class Tank {
 
 	Position getPosition() {
-		return new Position(x,y,direction);
+		return new Position(x, y, direction);
 	}
+
 	private static final int MOVE_SPEED = 5;
 
 	private int x;
@@ -52,6 +53,10 @@ public class Tank {
 
 	public Tank(int x, int y, Direction direction) {
 		this(x, y, false, direction);
+	}
+
+	public Tank(Position position, Boolean enemy) {
+		this(position.getX(), position.getX(), enemy, position.getDirection());
 	}
 
 	public Tank(int x, int y, boolean enemy, Direction direction) {
@@ -99,9 +104,9 @@ public class Tank {
 		String prefix = enemy ? "e" : "";
 		return direction.getImage(prefix + "tank");
 	}
-	
-	boolean  isDying() {
-		return this.hp <= MAX_HP*0.2;
+
+	boolean isDying() {
+		return this.hp <= MAX_HP * 0.2;
 	}
 
 	void draw(Graphics g) {

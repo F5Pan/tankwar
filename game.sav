@@ -1,10 +1,15 @@
 {
-	"direction":"DOWN",
-	"enemy":false,
-	"hp":100,
-	"live":true,
-	"rectangle":{"x":361,"y":100,"width":79,"height":40},
-	"rectangleForHitDetection":{"x":400,"y":100,"width":40,"height":40},
-	"x":400,
-	"y":100
+	"enemyPosition":[
+		{
+			"direction":"UP",
+			"x":130,
+			"y":245
+		}
+	],
+	"gameContinued":true,
+	"playerPosition":{
+		"direction":"UP",
+		"x":365,
+		"y":485
+	}
 }

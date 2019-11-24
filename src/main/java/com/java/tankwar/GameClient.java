@@ -1,5 +1,7 @@
 package com.java.tankwar;
 
+import static org.hamcrest.CoreMatchers.nullValue;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -31,9 +33,11 @@ import javax.swing.WindowConstants;
 import org.apache.commons.io.FileUtils;
 
 import com.alibaba.fastjson.JSON;
+import com.java.tankwar.Save.Position;
 
 public class GameClient extends JComponent {
 
+	private static final String GAME_SAVE = "game.sav";
 	public static final GameClient INSTANCE = new GameClient();
 
 	public static GameClient getInstance() {
@@ -199,6 +203,12 @@ public class GameClient extends JComponent {
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 
+		try {
+			client.load();
+		} catch (IOException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
 		while (true) {
 			try {
 				client.repaint();
@@ -215,16 +225,34 @@ public class GameClient extends JComponent {
 		}
 	}
 
-    void save(String destination) throws IOException {
-        Save save = new Save(playerTank.isLive(), playerTank.getPosition(),
-            enemyTanks.stream().filter(Tank::isLive)
-                .map(Tank::getPosition).collect(Collectors.toList()));
-        FileUtils.write(new File(destination), JSON.toJSONString(save, true), StandardCharsets.UTF_8);
-    }
+	private void load() throws IOException {
+		File file = new File(GAME_SAVE);
+		if (file.exists() && file.isFile()) {
+			String json = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+			Save save = JSON.parseObject(json, Save.class);
+			if (save.isGameContinued()) {
+				this.playerTank = new Tank(save.getPlayerPosition(), false);
 
-    void save() throws IOException {
-        this.save("game.sav");
-    }
+				this.enemyTanks.clear();
+				List<Position> enemyPosition = save.getEnemyPosition();
+				if (enemyPosition != null && !enemyPosition.isEmpty()) {
+					for (Position position : enemyPosition) {
+
+					}
+				}
+			}
+		}
+	}
+
+	void save(String destination) throws IOException {
+		Save save = new Save(playerTank.isLive(), playerTank.getPosition(),
+				enemyTanks.stream().filter(Tank::isLive).map(Tank::getPosition).collect(Collectors.toList()));
+		FileUtils.write(new File(destination), JSON.toJSONString(save, true), StandardCharsets.UTF_8);
+	}
+
+	void save() throws IOException {
+		this.save(GAME_SAVE);
+	}
 
 	public void restart() {
 		if (!playerTank.isLive()) {
