@@ -1,7 +1,5 @@
 package com.java.tankwar;
 
-import static org.hamcrest.CoreMatchers.nullValue;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -10,11 +8,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,7 +17,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javax.swing.JComponent;
@@ -39,7 +33,7 @@ public class GameClient extends JComponent {
 
 	private static final String GAME_SAVE = "game.sav";
 	public static final GameClient INSTANCE = new GameClient();
-
+	public static final int WIDTH = 1366,HEIGHT = 768;
 	public static GameClient getInstance() {
 		return INSTANCE;
 	}
@@ -92,9 +86,10 @@ public class GameClient extends JComponent {
 		this.walls = Arrays.asList(new Wall(280, 140, true, 12), new Wall(280, 540, true, 12),
 				new Wall(100, 160, false, 12), new Wall(700, 160, false, 12));
 		this.initEnemyTanks();
-		this.setPreferredSize(new Dimension(800, 600));
+		this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
 	}
 
+	
 	private void initEnemyTanks() {
 		this.enemyTanks = new CopyOnWriteArrayList<>();
 		for (int i = 0; i < 3; i++) {
@@ -109,7 +104,7 @@ public class GameClient extends JComponent {
 	@Override
 	protected void paintComponent(Graphics g) {
 		g.setColor(Color.black);
-		g.fillRect(0, 0, 800, 600);
+		g.fillRect(0, 0, WIDTH, HEIGHT);
 		if (!playerTank.isLive()) {
 
 			g.setColor(Color.RED);
@@ -237,7 +232,7 @@ public class GameClient extends JComponent {
 				List<Position> enemyPosition = save.getEnemyPosition();
 				if (enemyPosition != null && !enemyPosition.isEmpty()) {
 					for (Position position : enemyPosition) {
-
+						this.enemyTanks.add(new Tank(position, true));
 					}
 				}
 			}

@@ -112,20 +112,17 @@ public class Tank {
 	void draw(Graphics g) {
 
 		int oldX = x, oldY = y;
-		if (!this.enemy) {
-			this.determineDirection();
-		}
 		this.move();
 
 		if (x < 0) {
 			x = 0;
-		} else if (x > 800 - getImage().getHeight(null)) {
-			x = 800 - getImage().getHeight(null);
+		} else if (x > GameClient.WIDTH - getImage().getHeight(null)) {
+			x = GameClient.WIDTH - getImage().getHeight(null);
 		}
 		if (y < 0) {
 			y = 0;
-		} else if (y > 600 - getImage().getHeight(null)) {
-			y = 600 - getImage().getHeight(null);
+		} else if (y > GameClient.HEIGHT - getImage().getHeight(null)) {
+			y = GameClient.HEIGHT - getImage().getHeight(null);
 		}
 
 		Rectangle rec = this.getRectangle();
@@ -190,32 +187,16 @@ public class Tank {
 	private boolean up, down, left, right;
 
 	public void keyPressed(KeyEvent e) {
-		switch (e.getKeyCode()) {
-		case KeyEvent.VK_UP:
-			up = true;
-			break;
-		case KeyEvent.VK_DOWN:
-			down = true;
-			break;
-		case KeyEvent.VK_LEFT:
-			left = true;
-			break;
-		case KeyEvent.VK_RIGHT:
-			right = true;
-			break;
-
-		case KeyEvent.VK_CONTROL:
-			fire();
-			break;
-		case KeyEvent.VK_A:
-			superFire();
-			break;
-		case KeyEvent.VK_F2:
-			GameClient.getInstance().restart();
-			break;
-		}
-
-		this.determineDirection();
+		  switch (e.getKeyCode()) {
+          case KeyEvent.VK_UP: code |= Direction.UP.code; break;
+          case KeyEvent.VK_DOWN: code |= Direction.DOWN.code; break;
+          case KeyEvent.VK_LEFT: code |= Direction.LEFT.code; break;
+          case KeyEvent.VK_RIGHT: code |= Direction.RIGHT.code; break;
+          case KeyEvent.VK_CONTROL: fire(); break;
+          case KeyEvent.VK_A: superFire(); break;
+          case KeyEvent.VK_F2: GameClient.getInstance().restart(); break;
+      }
+      this.determineDirection();
 	}
 
 	private void fire() {
@@ -239,48 +220,26 @@ public class Tank {
 
 	private boolean stopped;
 
+	private int code;
+
 	private void determineDirection() {
-		if (!up && !left && !down && !right) {
+		Direction newDirection = Direction.get(code);
+		if (newDirection == null) {
 			this.stopped = true;
 		} else {
-			if (up && left && !down && !right) {
-				this.direction = Direction.LEFT_UP;
-			} else if (up && !left && !down && right) {
-				this.direction = Direction.RIGHT_UP;
-			} else if (up && !left && !down && !right) {
-				this.direction = Direction.UP;
-			} else if (!up && !left && down && !right) {
-				this.direction = Direction.DOWN;
-			} else if (!up && left && down && !right) {
-				this.direction = Direction.LEFT_DOWN;
-			} else if (!up && !left && down && right) {
-				this.direction = Direction.RIGHT_DOWN;
-			} else if (!up && left && !down && !right) {
-				this.direction = Direction.LEFT;
-			} else if (!up && !left && !down && right) {
-				this.direction = Direction.RIGHT;
-			}
+			this.direction = newDirection;
 			this.stopped = false;
 		}
-
 	}
 
 	public void keyReleased(KeyEvent e) {
-		switch (e.getKeyCode()) {
-		case KeyEvent.VK_UP:
-			up = false;
-			break;
-		case KeyEvent.VK_DOWN:
-			down = false;
-			break;
-		case KeyEvent.VK_LEFT:
-			left = false;
-			break;
-		case KeyEvent.VK_RIGHT:
-			right = false;
-			break;
-		}
-		this.determineDirection();
+		  switch (e.getKeyCode()) {
+          case KeyEvent.VK_UP: code ^= Direction.UP.code; break;
+          case KeyEvent.VK_DOWN: code ^= Direction.DOWN.code; break;
+          case KeyEvent.VK_LEFT: code ^= Direction.LEFT.code; break;
+          case KeyEvent.VK_RIGHT: code ^= Direction.RIGHT.code; break;
+      }
+      this.determineDirection();
 	}
 
 	private final Random random = new Random();

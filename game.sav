@@ -1,15 +1,15 @@
 {
 	"enemyPosition":[
 		{
-			"direction":"UP",
-			"x":130,
-			"y":245
+			"direction":"RIGHT_DOWN",
+			"x":330,
+			"y":608
 		}
 	],
 	"gameContinued":true,
 	"playerPosition":{
 		"direction":"UP",
-		"x":365,
-		"y":485
+		"x":660,
+		"y":170
 	}
 }
